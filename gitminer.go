@@ -1,7 +1,9 @@
 package main
 
-import "masa/gitminer/gitlogparser"
+import (
+	"masa/gitminer/gitlogparser"
+)
 
 func main() {
-	gitlogparser.ReadLogs()
+	gitlogparser.MineGitLogs()
 }
