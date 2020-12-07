@@ -69,6 +69,10 @@ committer Masayoshi Sugimoto <sugimoto.massayoshi@gmail.com> 1606838128 +0900
 		if current.timestamp != expected.timestamp {
 			t.Errorf("Got timestamp: %v, instead of: %v", current.timestamp, expected.timestamp)
 		}
+		if current.timezone != expected.timezone {
+			t.Errorf("Got timezone: %v, instead of: %v", current.timezone, expected.timezone)
+		}
+		expect(t, current.log, expected.log)
 	}
 
 	if parser.current != 1 {

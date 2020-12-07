@@ -46,7 +46,8 @@ type Commit struct {
 	commit    string
 	author    string
 	timestamp int
-	zone      string
+	timezone  string
+	log       string
 }
 
 type LogParser struct {
@@ -62,6 +63,7 @@ var commitPattern = regexp.MustCompile(`^commit (.*)$`)
 var treePattern = regexp.MustCompile(`^tree (.*)$`)
 var parentPattern = regexp.MustCompile(`^parent (.*)$`)
 var authorPattern = regexp.MustCompile(`^author (.+) <(.+)> ([0-9]+) (.*)$`)
+var commitLogPattern = regexp.MustCompile(`^\t(.*)`)
 
 func (parser *LogParser) readLine(line []byte) {
 	l := string(line)
@@ -93,7 +95,12 @@ func (parser *LogParser) readLine(line []byte) {
 		if err != nil {
 			fmt.Printf("Failed to convert timestamp: %v", authorMatch[3])
 		}
-		parser.currentCommit().zone = authorMatch[4]
+		parser.currentCommit().timezone = authorMatch[4]
+	}
+
+	commitLogMatch := commitLogPattern.FindStringSubmatch(l)
+	if commitLogMatch != nil {
+		parser.currentCommit().log = commitLogMatch[1]
 	}
 }
 
