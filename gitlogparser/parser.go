@@ -100,7 +100,11 @@ func (parser *LogParser) readLine(line []byte) {
 
 	commitLogMatch := commitLogPattern.FindStringSubmatch(l)
 	if commitLogMatch != nil {
-		parser.currentCommit().log = commitLogMatch[1]
+		if len(parser.currentCommit().log) == 0 {
+			parser.currentCommit().log = commitLogMatch[1]
+		} else {
+			parser.currentCommit().log += "\n" + commitLogMatch[1]
+		}
 	}
 }
 
