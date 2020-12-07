@@ -85,3 +85,5 @@ func expect(t *testing.T, s1 string, s2 string) {
 		t.Errorf("Got: %v, instead of: %v", s1, s2)
 	}
 }
+
+// Add a comment to do some tests with git
