@@ -4,15 +4,20 @@ import (
 	"bufio"
 	"fmt"
 	"log"
+	"masa/gitminer/logmanager"
 	"os/exec"
 	"regexp"
 	"strconv"
 )
 
-func MineGitLogs() *LogParser {
+func MineGitLogs() *logmanager.LogManager {
 	parser := newLogParser()
 	consumeLogs(parser)
-	return parser
+	logManager := &logmanager.LogManager{}
+	for _, commit := range parser.commits {
+		logManager.AddCommit(commit)
+	}
+	return logManager
 }
 
 func consumeLogs(parser *LogParser) error {
@@ -42,16 +47,8 @@ func consumeLogs(parser *LogParser) error {
 	return nil
 }
 
-type Commit struct {
-	commit    string
-	author    string
-	timestamp int
-	timezone  string
-	log       string
-}
-
 type LogParser struct {
-	commits []*Commit
+	commits []*logmanager.Commit
 	current int
 }
 
@@ -70,8 +67,8 @@ func (parser *LogParser) readLine(line []byte) {
 	fmt.Println(l)
 	commitHash := commitPattern.FindStringSubmatch(string(l))
 	if commitHash != nil {
-		c := &(Commit{})
-		c.commit = commitHash[1]
+		c := &(logmanager.Commit{})
+		c.Commit = commitHash[1]
 		parser.current = len(parser.commits)
 		parser.commits = append(parser.commits, c)
 		return
@@ -89,25 +86,25 @@ func (parser *LogParser) readLine(line []byte) {
 
 	authorMatch := authorPattern.FindStringSubmatch(l)
 	if authorMatch != nil {
-		parser.currentCommit().author = authorMatch[1]
+		parser.currentCommit().Author = authorMatch[1]
 		var err error
-		parser.currentCommit().timestamp, err = strconv.Atoi(authorMatch[3])
+		parser.currentCommit().Timestamp, err = strconv.Atoi(authorMatch[3])
 		if err != nil {
 			fmt.Printf("Failed to convert timestamp: %v", authorMatch[3])
 		}
-		parser.currentCommit().timezone = authorMatch[4]
+		parser.currentCommit().Timezone = authorMatch[4]
 	}
 
 	commitLogMatch := commitLogPattern.FindStringSubmatch(l)
 	if commitLogMatch != nil {
-		if len(parser.currentCommit().log) == 0 {
-			parser.currentCommit().log = commitLogMatch[1]
+		if len(parser.currentCommit().Log) == 0 {
+			parser.currentCommit().Log = commitLogMatch[1]
 		} else {
-			parser.currentCommit().log += "\n" + commitLogMatch[1]
+			parser.currentCommit().Log += "\n" + commitLogMatch[1]
 		}
 	}
 }
 
-func (parser *LogParser) currentCommit() *Commit {
+func (parser *LogParser) currentCommit() *logmanager.Commit {
 	return parser.commits[parser.current]
 }

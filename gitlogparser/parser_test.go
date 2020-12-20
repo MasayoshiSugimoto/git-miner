@@ -60,19 +60,19 @@ committer Masayoshi Sugimoto <sugimoto.massayoshi@gmail.com> 1606838128 +0900
 
 	for i, expected := range expecteds {
 		current := parser.commits[i]
-		if current.commit != expected.commit {
-			t.Errorf("Got commit: %v, instead of: %v", current.commit, expected.commit)
+		if current.Commit != expected.commit {
+			t.Errorf("Got commit: %v, instead of: %v", current.Commit, expected.commit)
 		}
-		if current.author != expected.author {
-			t.Errorf("Got author: %v, instead of: %v", current.author, expected.commit)
+		if current.Author != expected.author {
+			t.Errorf("Got author: %v, instead of: %v", current.Author, expected.commit)
 		}
-		if current.timestamp != expected.timestamp {
-			t.Errorf("Got timestamp: %v, instead of: %v", current.timestamp, expected.timestamp)
+		if current.Timestamp != expected.timestamp {
+			t.Errorf("Got timestamp: %v, instead of: %v", current.Timestamp, expected.timestamp)
 		}
-		if current.timezone != expected.timezone {
-			t.Errorf("Got timezone: %v, instead of: %v", current.timezone, expected.timezone)
+		if current.Timezone != expected.timezone {
+			t.Errorf("Got timezone: %v, instead of: %v", current.Timezone, expected.timezone)
 		}
-		expect(t, current.log, expected.log)
+		expect(t, current.Log, expected.log)
 	}
 
 	if parser.current != 1 {
@@ -107,7 +107,7 @@ Second line`
 		t.Errorf("Got length: %v, instead of: %v", len(parser.commits), 2)
 	}
 
-	expect(t, parser.currentCommit().log, expectedLog)
+	expect(t, parser.currentCommit().Log, expectedLog)
 }
 
 func expect(t *testing.T, s1 string, s2 string) {
