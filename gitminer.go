@@ -5,12 +5,14 @@ import (
 	"masa/gitminer/controller"
 	"masa/gitminer/gitlogparser"
 	"net/http"
+	"os/exec"
 	//"masa/gitminer/ui"
 )
 
 func main() {
 
 	go startFileServer()
+	// startChrome()
 
 	logManager := gitlogparser.MineGitLogs()
 	controller.Start(logManager)
@@ -25,4 +27,13 @@ func startFileServer() {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func startChrome() {
+	cmd := exec.Command("cmd", "/c", "start", "chrome", "http://localhost:8080/gitminer")
+	err := cmd.Start()
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println("Started Chrome on 'localhost:8080'")
 }
