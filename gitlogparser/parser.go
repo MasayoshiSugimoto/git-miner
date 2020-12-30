@@ -10,9 +10,9 @@ import (
 	"strconv"
 )
 
-func MineGitLogs() *logmanager.LogManager {
+func MineGitLogs(workingDir string) *logmanager.LogManager {
 	parser := newLogParser()
-	consumeLogs(parser)
+	consumeLogs(parser, workingDir)
 	logManager := &logmanager.LogManager{}
 	for _, commit := range parser.commits {
 		logManager.AddCommit(commit)
@@ -20,8 +20,9 @@ func MineGitLogs() *logmanager.LogManager {
 	return logManager
 }
 
-func consumeLogs(parser *LogParser) error {
+func consumeLogs(parser *LogParser, workingDir string) error {
 	cmd := exec.Command("git", "log", "--pretty=raw")
+	cmd.Dir = workingDir
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
 		log.Fatal("Failed execute `git log`: ", err)
