@@ -1,4 +1,4 @@
-package config
+package services
 
 type Cfg struct {
 	RepoFolder string

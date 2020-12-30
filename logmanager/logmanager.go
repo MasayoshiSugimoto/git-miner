@@ -5,6 +5,7 @@ import (
 )
 
 type Commit struct {
+	Project   string
 	Commit    string
 	Author    string
 	Timestamp int

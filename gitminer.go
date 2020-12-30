@@ -2,10 +2,10 @@ package main
 
 import (
 	"log"
-	"masa/gitminer/config"
 	"masa/gitminer/controller"
 	"masa/gitminer/gitlogparser"
 	"masa/gitminer/logmanager"
+	"masa/gitminer/services"
 	"net/http"
 	"os/exec"
 )
@@ -27,7 +27,7 @@ func startChrome() {
 type appContext struct {
 	fileServer *http.Handler
 	logManager *logmanager.LogManager
-	config     *config.Cfg
+	config     *services.Cfg
 }
 
 func (context *appContext) injectFileServer() http.Handler {
@@ -45,9 +45,9 @@ func (context *appContext) injectLogManager() *logmanager.LogManager {
 	return context.logManager
 }
 
-func (context *appContext) injectConfig() config.Cfg {
+func (context *appContext) injectConfig() services.Cfg {
 	if context.config == nil {
-		context.config = config.Config()
+		context.config = services.Config()
 	}
 	return *context.config
 }
