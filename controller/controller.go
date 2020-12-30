@@ -8,6 +8,7 @@ import (
 )
 
 func Start(logManager *logmanager.LogManager) {
+	log.Println("Starting controller")
 
 	http.HandleFunc("/gitminer", func(w http.ResponseWriter, r *http.Request) {
 

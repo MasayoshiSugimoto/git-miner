@@ -2,7 +2,6 @@ package gitlogparser
 
 import (
 	"bufio"
-	"fmt"
 	"log"
 	"masa/gitminer/logmanager"
 	"os/exec"
@@ -11,12 +10,14 @@ import (
 )
 
 func MineGitLogs(workingDir string) *logmanager.LogManager {
+	log.Println("Mining git logs...")
 	parser := newLogParser()
 	consumeLogs(parser, workingDir)
 	logManager := &logmanager.LogManager{}
 	for _, commit := range parser.commits {
 		logManager.AddCommit(commit)
 	}
+	log.Println("Done Mining git logs")
 	return logManager
 }
 
@@ -27,7 +28,7 @@ func consumeLogs(parser *LogParser, workingDir string) error {
 	if err != nil {
 		log.Fatal("Failed execute `git log`: ", err)
 	}
-	fmt.Println("`git log` executed")
+	log.Println("`git log` executed")
 
 	err = cmd.Start()
 	if err != nil {
@@ -41,13 +42,13 @@ func consumeLogs(parser *LogParser, workingDir string) error {
 		}
 		parser.readLine(scanner.Bytes())
 	}
-	fmt.Println("Finished to scan stdout")
+	log.Println("Finished to scan stdout")
 
 	if err := scanner.Err(); err != nil {
 		log.Fatal("Failed scan git logs: ", err)
 	}
 
-	fmt.Println("Git logs parsed")
+	log.Println("Git logs parsed")
 	return nil
 }
 
@@ -68,7 +69,6 @@ var commitLogPattern = regexp.MustCompile(`^\t(.*)`)
 
 func (parser *LogParser) readLine(line []byte) {
 	l := string(line)
-	fmt.Println(l)
 	commitHash := commitPattern.FindStringSubmatch(string(l))
 	if commitHash != nil {
 		c := &(logmanager.Commit{})
@@ -94,7 +94,7 @@ func (parser *LogParser) readLine(line []byte) {
 		var err error
 		parser.currentCommit().Timestamp, err = strconv.Atoi(authorMatch[3])
 		if err != nil {
-			fmt.Printf("Failed to convert timestamp: %v", authorMatch[3])
+			log.Printf("Failed to convert timestamp: %v", authorMatch[3])
 		}
 		parser.currentCommit().Timezone = authorMatch[4]
 	}

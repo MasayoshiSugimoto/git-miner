@@ -32,7 +32,7 @@ type appContext struct {
 
 func (context *appContext) injectFileServer() http.Handler {
 	if context.fileServer == nil {
-		fs := controller.StartFileServer()
+		fs := controller.StartFileServer(context.injectConfig().FileServerPort)
 		context.fileServer = &fs
 	}
 	return *context.fileServer
@@ -53,7 +53,7 @@ func (context *appContext) injectConfig() services.Cfg {
 }
 
 func (context *appContext) init() {
-	context.injectFileServer()
 	context.injectConfig()
+	context.injectFileServer()
 	controller.Start(context.injectLogManager())
 }
