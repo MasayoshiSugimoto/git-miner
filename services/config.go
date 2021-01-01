@@ -13,7 +13,7 @@ func Config() *Cfg {
 	log.Println("Loading Configuration...")
 
 	config := &Cfg{
-		RepoFolder:     ".",
+		RepoFolder:     "..",
 		FileServerPort: 3000,
 	}
 

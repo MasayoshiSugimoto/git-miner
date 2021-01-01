@@ -55,5 +55,6 @@ func (context *appContext) injectConfig() services.Cfg {
 func (context *appContext) init() {
 	context.injectConfig()
 	context.injectFileServer()
+	context.injectLogManager().Dump()
 	controller.Start(context.injectLogManager())
 }

@@ -2,26 +2,52 @@ package gitlogparser
 
 import (
 	"bufio"
+	"io/ioutil"
 	"log"
 	"masa/gitminer/logmanager"
 	"os/exec"
+	"path/filepath"
 	"regexp"
 	"strconv"
 )
 
 func MineGitLogs(workingDir string) *logmanager.LogManager {
 	log.Println("Mining git logs...")
-	parser := newLogParser()
-	consumeLogs(parser, workingDir)
-	logManager := &logmanager.LogManager{}
-	for _, commit := range parser.commits {
-		logManager.AddCommit(commit)
+
+	// List all folders in the working dir
+	dirs := []string{}
+	files, err := ioutil.ReadDir(workingDir)
+	if err != nil {
+		log.Fatal(err)
 	}
+	for _, file := range files {
+		if !file.IsDir() {
+			continue
+		}
+		dirs = append(dirs, filepath.Join(workingDir, file.Name()))
+	}
+	log.Println("Preparing to mine following dirs:", dirs)
+
+	logManager := &logmanager.LogManager{}
+	for _, repo := range dirs {
+		parser := newLogParser()
+		err := consumeLogs(parser, repo)
+		if err != nil {
+			log.Println("Failed to comsume git logs or repo:", repo)
+		}
+
+		for _, commit := range parser.commits {
+			logManager.AddCommit(commit)
+		}
+	}
+
 	log.Println("Done Mining git logs")
 	return logManager
 }
 
 func consumeLogs(parser *LogParser, workingDir string) error {
+	log.Printf("Consumming git logs of `%s`", workingDir)
+
 	cmd := exec.Command("git", "log", "--pretty=raw")
 	cmd.Dir = workingDir
 	stdout, err := cmd.StdoutPipe()
@@ -32,7 +58,8 @@ func consumeLogs(parser *LogParser, workingDir string) error {
 
 	err = cmd.Start()
 	if err != nil {
-		log.Fatal("Failed to start `git log` command: ", err)
+		log.Println("Failed to start `git log` command: ", err)
+		return err
 	}
 
 	scanner := bufio.NewScanner(stdout)

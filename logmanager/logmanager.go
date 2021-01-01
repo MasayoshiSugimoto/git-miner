@@ -1,6 +1,7 @@
 package logmanager
 
 import (
+	"log"
 	"time"
 )
 
@@ -45,4 +46,11 @@ func (logManager *LogManager) NbCommitPerDayOfWeek() [7]int {
 		nbCommitsPerDayOfWeek[index]++
 	}
 	return nbCommitsPerDayOfWeek
+}
+
+func (logManager *LogManager) Dump() {
+	log.Println("Dumping logManager...")
+	for _, commit := range logManager.commits {
+		log.Println(commit)
+	}
 }
