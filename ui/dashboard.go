@@ -137,13 +137,28 @@ func DashboardPageOld(w io.Writer, logManager *logmanager.LogManager) {
 }
 
 func DashboardPage(w io.Writer, nbCommitPerDayOfWeek [7]int) {
-	tmp, err := template.New("dashboard").Parse(`
+	const repoSelector = `
+		{{define "repo_selector"}}
+		<form action="/gitminer" method="get">
+			<label for="repo">Repo:</label>
+			<select name="repo" id="repo">
+				{{range .}}<option value="{{.Repo}}">{{.RepoName}}</option>{{end}}
+			</select>
+			<br><br>
+			<input type="submit" value="Submit">
+		</form>
+		{{end}}
+	`
+
+	const htmlPage = `
 		<html>
 			<script src="http://localhost:3000/moment/moment.js"></script>
 			<script src="http://localhost:3000/chart.js/dist/Chart.js"></script>
 		<head>
 		</head>
 		<body>
+			{{template "repo_selector" .Repos}}
+
 			<canvas id="myChart"></canvas>
 			<script>
 				var ctx = document.getElementById('myChart').getContext('2d');
@@ -153,7 +168,7 @@ func DashboardPage(w io.Writer, nbCommitPerDayOfWeek [7]int) {
 						labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
 						datasets: [{
 							label: 'Number Of Commit Per Day Of The Week',
-							data: {{.}},
+							data: {{.NbCommitPerDay}},
 							borderWidth: 1
 						}]
 					},
@@ -170,16 +185,28 @@ func DashboardPage(w io.Writer, nbCommitPerDayOfWeek [7]int) {
 			</script>
 		</body>
 		</html>
-	`)
-	if err != nil {
-		panic(err)
+	`
+
+	tmp := template.Must(template.Must(template.New("dashboard").Parse(htmlPage)).Parse(repoSelector))
+
+	type repository struct {
+		Repo     string
+		RepoName string
 	}
 
 	type record struct {
 		NbCommitPerDay [7]int
+		Repos          []repository
 	}
 
-	err = tmp.Execute(w, nbCommitPerDayOfWeek)
+	err := tmp.Execute(w, record{
+		NbCommitPerDay: nbCommitPerDayOfWeek,
+		Repos: []repository{
+			{Repo: "repo1", RepoName: "Repo 1"},
+			{Repo: "repo2", RepoName: "Repo 2"},
+			{Repo: "repo3", RepoName: "Repo 3"},
+		},
+	})
 	if err != nil {
 		log.Fatalf("Failed to generate dashboard page: %v", err)
 	}
