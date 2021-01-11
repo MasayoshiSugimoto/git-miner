@@ -63,13 +63,18 @@ func (logManager *LogManager) Repos() []string {
 		repoMap[repo.Project] = true
 	}
 	repos := []string{}
-	for key, _ := range repoMap {
+	for key := range repoMap {
 		repos = append(repos, key)
 	}
 	return repos
 }
 
 func RepoFilter(repo string) LogFilter {
+	if repo == "" {
+		return func(commits []*Commit) []*Commit {
+			return commits
+		}
+	}
 	filter := func(commits []*Commit) []*Commit {
 		filteredCommits := []*Commit{}
 		for _, commit := range commits {

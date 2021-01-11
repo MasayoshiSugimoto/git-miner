@@ -200,7 +200,13 @@ func DashboardPage(w io.Writer, nbCommitPerDayOfWeek [7]int, repos []string, sel
 		Repos          []repository
 	}
 
-	reps := []repository{}
+	reps := []repository{
+		{
+			Repo:     "",
+			RepoName: "All",
+			Selected: selectedRepo == "",
+		},
+	}
 	for _, repo := range repos {
 		reps = append(reps, repository{
 			Repo:     repo,
