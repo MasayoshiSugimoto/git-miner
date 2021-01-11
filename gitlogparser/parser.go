@@ -65,7 +65,7 @@ func consumeLogs(parser *LogParser, workingDir string) error {
 	scanner := bufio.NewScanner(stdout)
 	for scanner.Scan() {
 		if parser.currentCommit() != nil {
-			parser.currentCommit().Project = workingDir
+			parser.currentCommit().Project = filepath.Base(workingDir)
 		}
 		parser.readLine(scanner.Bytes())
 	}

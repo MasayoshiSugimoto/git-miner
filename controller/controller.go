@@ -11,12 +11,14 @@ func Start(logManager *logmanager.LogManager) {
 	log.Println("Starting controller")
 
 	http.HandleFunc("/gitminer", func(w http.ResponseWriter, r *http.Request) {
+		log.Println("GET /gitminer")
+		err := r.ParseForm()
+		if err != nil {
+			log.Panicf("Failed to parse form: %+v", r)
+		}
+		log.Printf("form = %+v", r.Form)
 
-		// htmlGen := ui.NewHtmlGen()
-
-		// htmlGen.Page(w, &ui.Page{Body: "<h1>hello</h1>"})
-
-		ui.DashboardPage(w, logManager.NbCommitPerDayOfWeek())
+		ui.DashboardPage(w, logManager.NbCommitPerDayOfWeek(logmanager.RepoFilter(r.Form.Get("repo"))), logManager.Repos())
 	})
 
 	log.Fatal(http.ListenAndServe(":8080", nil))

@@ -136,7 +136,7 @@ func DashboardPageOld(w io.Writer, logManager *logmanager.LogManager) {
 	}
 }
 
-func DashboardPage(w io.Writer, nbCommitPerDayOfWeek [7]int) {
+func DashboardPage(w io.Writer, nbCommitPerDayOfWeek [7]int, repos []string) {
 	const repoSelector = `
 		{{define "repo_selector"}}
 		<form action="/gitminer" method="get">
@@ -199,13 +199,17 @@ func DashboardPage(w io.Writer, nbCommitPerDayOfWeek [7]int) {
 		Repos          []repository
 	}
 
+	reps := []repository{}
+	for _, repo := range repos {
+		reps = append(reps, repository{
+			Repo:     repo,
+			RepoName: repo,
+		})
+	}
+
 	err := tmp.Execute(w, record{
 		NbCommitPerDay: nbCommitPerDayOfWeek,
-		Repos: []repository{
-			{Repo: "repo1", RepoName: "Repo 1"},
-			{Repo: "repo2", RepoName: "Repo 2"},
-			{Repo: "repo3", RepoName: "Repo 3"},
-		},
+		Repos:          reps,
 	})
 	if err != nil {
 		log.Fatalf("Failed to generate dashboard page: %v", err)
