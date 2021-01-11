@@ -18,7 +18,14 @@ func Start(logManager *logmanager.LogManager) {
 		}
 		log.Printf("form = %+v", r.Form)
 
-		ui.DashboardPage(w, logManager.NbCommitPerDayOfWeek(logmanager.RepoFilter(r.Form.Get("repo"))), logManager.Repos())
+		repo := r.Form.Get("repo")
+
+		ui.DashboardPage(
+			w,
+			logManager.NbCommitPerDayOfWeek(logmanager.RepoFilter(repo)),
+			logManager.Repos(),
+			repo,
+		)
 	})
 
 	log.Fatal(http.ListenAndServe(":8080", nil))

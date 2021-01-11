@@ -136,13 +136,13 @@ func DashboardPageOld(w io.Writer, logManager *logmanager.LogManager) {
 	}
 }
 
-func DashboardPage(w io.Writer, nbCommitPerDayOfWeek [7]int, repos []string) {
+func DashboardPage(w io.Writer, nbCommitPerDayOfWeek [7]int, repos []string, selectedRepo string) {
 	const repoSelector = `
 		{{define "repo_selector"}}
 		<form action="/gitminer" method="get">
 			<label for="repo">Repo:</label>
 			<select name="repo" id="repo">
-				{{range .}}<option value="{{.Repo}}">{{.RepoName}}</option>{{end}}
+				{{range .}}<option value="{{.Repo}}" {{if .Selected }}selected{{end}}>{{.RepoName}}</option>{{end}}
 			</select>
 			<br><br>
 			<input type="submit" value="Submit">
@@ -192,6 +192,7 @@ func DashboardPage(w io.Writer, nbCommitPerDayOfWeek [7]int, repos []string) {
 	type repository struct {
 		Repo     string
 		RepoName string
+		Selected bool
 	}
 
 	type record struct {
@@ -204,6 +205,7 @@ func DashboardPage(w io.Writer, nbCommitPerDayOfWeek [7]int, repos []string) {
 		reps = append(reps, repository{
 			Repo:     repo,
 			RepoName: repo,
+			Selected: repo == selectedRepo,
 		})
 	}
 
