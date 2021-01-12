@@ -7,6 +7,7 @@ import (
 	"net/http"
 )
 
+// Start setup and starts the http server which handles page requests
 func Start(logManager *logmanager.LogManager) {
 	log.Println("Starting controller")
 

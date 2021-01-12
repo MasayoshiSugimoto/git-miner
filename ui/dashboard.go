@@ -6,6 +6,7 @@ import (
 	"log"
 )
 
+// DashboardPage generates the main `Dashboard` page and writes it to the writer passed as parameter.
 func DashboardPage(w io.Writer, nbCommitPerDayOfWeek [7]int, repos []string, selectedRepo string) {
 	const repoSelector = `
 		{{define "repo_selector"}}

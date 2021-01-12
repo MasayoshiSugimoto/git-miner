@@ -11,6 +11,7 @@ import (
 	"strconv"
 )
 
+// MineGitLogs executes `git log` in all subdirectories of `workingDir` and generates a data structure from the logs.
 func MineGitLogs(workingDir string) *logmanager.LogManager {
 	log.Println("Mining git logs...")
 
@@ -79,6 +80,7 @@ func consumeLogs(parser *LogParser, workingDir string) error {
 	return nil
 }
 
+// LogParser holds the state of the logs being parsed.
 type LogParser struct {
 	commits []*logmanager.Commit
 	current int

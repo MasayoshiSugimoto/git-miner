@@ -6,6 +6,7 @@ import (
 	"net/http"
 )
 
+// StartFileServer starts the file server which serves additional javascript dependencies
 func StartFileServer(port int) http.Handler {
 	log.Println("Starting file server...")
 
